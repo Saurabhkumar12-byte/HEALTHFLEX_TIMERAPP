@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, Text, SafeAreaView } from 'react-native';
-import { useContext } from 'react';
+import React, { useState, useContext } from 'react';
+import { 
+  View, TextInput, TouchableOpacity, StyleSheet, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, Platform 
+} from 'react-native';
 import { TimerContext } from '../context/TimerContext';
 import { Timer } from '../types';
 import TopBar from '../components/Topbar';
@@ -61,73 +62,85 @@ const CreateTimerScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <TopBar title="Create Timer" />
-      <View style={styles.innerContainer}>
-        <View style={styles.headerSection}>
-          <Text style={styles.header}>New Timer</Text>
-          <Text style={styles.subHeader}>Customize Your Time Management</Text>
-        </View>
-
-        <View style={styles.formContainer}>
-          <View style={styles.inputWrapper}>
-            <TimeIcon size={24} color="#6C63FF" />
-            <TextInput
-              style={styles.input}
-              placeholder="Timer Name"
-              placeholderTextColor="#A9A9A9"
-              value={name}
-              onChangeText={setName}
-            />
-          </View>
-
-          <View style={styles.inputWrapper}>
-            <TimerIcon size={24} color="#6C63FF" />
-            <TextInput
-              style={styles.input}
-              placeholder="Duration (seconds)"
-              placeholderTextColor="#A9A9A9"
-              value={duration}
-              onChangeText={setDuration}
-              keyboardType="numeric"
-            />
-          </View>
-
-          <View style={styles.categorySection}>
-            <Text style={styles.categoryLabel}>Select Category</Text>
-            <View style={styles.categoryGrid}>
-              {categories.map((cat) => {
-                const IconComponent = cat.icon;
-                return (
-                  <TouchableOpacity 
-                    key={cat.label}
-                    style={[
-                      styles.categoryItem,
-                      category === cat.label && styles.selectedCategory
-                    ]}
-                    onPress={() => setCategory(cat.label)}
-                    activeOpacity={0.7}
-                  >
-                    <IconComponent 
-                      size={30} 
-                      color={category === cat.label ? '#FFF' : '#6C63FF'} 
-                    />
-                    <Text style={[
-                      styles.categoryText,
-                      category === cat.label && styles.selectedCategoryText
-                    ]}>{cat.label}</Text>
-                  </TouchableOpacity>
-                );
-              })}
+      
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollContainer} 
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.innerContainer}>
+            <View style={styles.headerSection}>
+              <Text style={styles.header}>New Timer</Text>
+              <Text style={styles.subHeader}>Customize Your Time Management</Text>
             </View>
-          </View>
-        </View>
 
-        <TouchableOpacity 
-          style={styles.addButton} 
-          onPress={handleAddTimer}>
-          <AddCircleIcon size={24} color="#FFF" />
-          <Text style={styles.addButtonText}>Create Timer</Text>
-        </TouchableOpacity>
-      </View>
+            <View style={styles.formContainer}>
+              <View style={styles.inputWrapper}>
+                <TimeIcon size={24} color="#6C63FF" />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Timer Name"
+                  placeholderTextColor="#A9A9A9"
+                  value={name}
+                  onChangeText={setName}
+                />
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <TimerIcon size={24} color="#6C63FF" />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Duration (seconds)"
+                  placeholderTextColor="#A9A9A9"
+                  value={duration}
+                  onChangeText={setDuration}
+                  keyboardType="numeric"
+                />
+              </View>
+
+              <View style={styles.categorySection}>
+                <Text style={styles.categoryLabel}>Select Category</Text>
+                <View style={styles.categoryGrid}>
+                  {categories.map((cat) => {
+                    const IconComponent = cat.icon;
+                    return (
+                      <TouchableOpacity 
+                        key={cat.label}
+                        style={[
+                          styles.categoryItem,
+                          category === cat.label && styles.selectedCategory
+                        ]}
+                        onPress={() => setCategory(cat.label)}
+                        activeOpacity={0.7}
+                      >
+                        <IconComponent 
+                          size={30} 
+                          color={category === cat.label ? '#FFF' : '#6C63FF'} 
+                        />
+                        <Text style={[
+                          styles.categoryText,
+                          category === cat.label && styles.selectedCategoryText
+                        ]}>{cat.label}</Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </View>
+            </View>
+
+            <TouchableOpacity 
+              style={styles.addButton} 
+              onPress={handleAddTimer}
+            >
+              <AddCircleIcon size={24} color="#FFF" />
+              <Text style={styles.addButtonText}>Create Timer</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -137,9 +150,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F7F9FC',
   },
+  scrollContainer: {
+    flexGrow: 1,
+  },
   innerContainer: {
-    flex: 1,
     paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   headerSection: {
     marginVertical: 24,
@@ -158,7 +174,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 20,
-   
   },
   inputWrapper: {
     flexDirection: 'row',
@@ -198,7 +213,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
-    transition: 'background-color 0.3s',
   },
   selectedCategory: {
     backgroundColor: '#6C63FF',
